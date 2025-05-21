@@ -61,7 +61,7 @@ class SaleResource extends Resource
                                 ->get()
                                 ->mapWithKeys(function ($variant) {
                                     return [
-                                        $variant->id => $variant->type . $variant->blok ? ' - ' . $variant->blok : '',
+                                        $variant->id => $variant->type . ($variant->blok ? ' - ' . $variant->blok : ''),
                                     ];
                                 });
                         }),
