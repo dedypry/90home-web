@@ -65,8 +65,13 @@ class SaleResource extends Resource
                                     ];
                                 });
                         }),
+                    Forms\Components\TextInput::make('blok')
+                        ->required()
+                        ->placeholder('Masukan blok rumah, misal D2/10')
+                        ->maxLength(255),
                     Forms\Components\TextInput::make('payment_type')
                         ->required()
+                        ->placeholder('Masukan Payment Type, misal KPR BTN FLPP')
                         ->maxLength(255),
                     Forms\Components\Select::make('agent_coordinator')
                         ->searchable()
@@ -88,6 +93,8 @@ class SaleResource extends Resource
                         })
                         ->required(),
                     Forms\Components\TextInput::make('customer')
+                        ->label('Nama Pembeli')
+                        ->placeholder('Masukan nama pembeli Rumah')
                         ->required()
                         ->maxLength(255),
                     Forms\Components\Select::make('user_id')
@@ -97,7 +104,7 @@ class SaleResource extends Resource
                         ->required(),
 
                     Forms\Components\TextInput::make('promo')
-                        ->required()
+                        ->placeholder('Jika ada Promo, Bisa dimasukan disini')
                         ->maxLength(255),
                     Forms\Components\Select::make('status')
                         ->options([
@@ -117,6 +124,7 @@ class SaleResource extends Resource
                         ->displayFormat('D, d F Y')
                         ->locale('id')
                         ->closeOnDateSelection()
+                        ->default(now())
                         ->required(),
                     Forms\Components\DatePicker::make('payment_at')
                         ->label('Tanggal Pembayaran Invoice')
