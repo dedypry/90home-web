@@ -12,8 +12,8 @@ class SalesWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $rawSales = Sale::selectRaw('EXTRACT(MONTH FROM created_at) AS month, SUM(price) AS total')
-            ->whereYear('created_at', now()->year)
+        $rawSales = Sale::selectRaw('EXTRACT(MONTH FROM booking_at) AS month, SUM(price) AS total')
+            ->whereYear('booking_at', now()->year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
