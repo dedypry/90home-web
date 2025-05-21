@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sales', function (Blueprint $table) {
-            $table->json('attachment')->default('[]');
+            $table->json('attachment')->nullable()->default('[]');
         });
     }
 

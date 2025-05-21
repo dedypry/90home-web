@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->json('images');
-            $table->string('cluster');
+            $table->json('images')->nullable();
+            $table->string('cluster')->nullable();
             $table->decimal('price', 18,2)->default(0);
             $table->string('type')->nullable();
             $table->string('blok')->nullable();

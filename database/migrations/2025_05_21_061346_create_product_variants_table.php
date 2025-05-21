@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->string('blok');
-            $table->decimal('price', 18, 2);
-            $table->text('description');
+            $table->string('type')->nullable();
+            $table->string('blok')->nullable();
+            $table->decimal('price', 18, 2)->nullable()->default(0);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
