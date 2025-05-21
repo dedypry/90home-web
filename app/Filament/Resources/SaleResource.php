@@ -190,6 +190,30 @@ class SaleResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                ->color(fn($state) => match ($state) {
+                    'booking'     => 'info',
+                    'akad'        => 'success',
+                    'invoice'     => 'warning',
+                    'payment'     => 'primary',
+                    'resubmitted' => 'gray',
+                    'rejected'    => 'danger',
+                    default       => 'secondary',
+                })
+                ->formatStateUsing(fn($state) => match ($state) {
+                    'booking'     => 'Booking',
+                    'akad'        => 'Akad',
+                    'invoice'     => 'Invoice',
+                    'payment'     => 'Pembayaran',
+                    'resubmitted' => 'Ajukan Kembali',
+                    'rejected'    => 'Ditolak',
+                    default       => ucfirst($state),
+                })
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('booking_at')
+                    ->since()
+                    ->label('Tanggal Booking')
+                    ->dateTooltip()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga')
