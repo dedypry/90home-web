@@ -93,6 +93,10 @@ class SaleResource extends Resource
                         ->locale('id')
                         ->closeOnDateSelection()
                         ->visible(fn(string $context) => $context === 'edit'),
+
+                Forms\Components\TextInput::make('booking_fee')
+                    ->prefix('Rp')
+                    ->numeric(),
                 ])->columns(2)
             ]);
     }

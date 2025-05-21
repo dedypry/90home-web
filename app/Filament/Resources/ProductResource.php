@@ -34,7 +34,6 @@ class ProductResource extends Resource
                         ->imageEditor()
                         ->panelLayout('grid')
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
-                        ->required()
                         ->deleteUploadedFileUsing(function (string $file): void {
                             if (Storage::disk('public')->exists($file)) {
                                 Storage::disk('public')->delete($file);
