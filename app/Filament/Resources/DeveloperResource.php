@@ -41,6 +41,11 @@ class DeveloperResource extends Resource
                         })
                         ->required()
                         ->columnSpanFull(),
+                    Forms\Components\TextInput::make('company')
+                        ->label('Nama Perusahaan')
+                        ->placeholder('Masukan nama Perusahaan')
+                        ->maxLength(255)
+                        ->required(),
                     Forms\Components\TextInput::make('company_name')
                         ->label('Nama Developer')
                         ->placeholder('Masukan nama developer')
@@ -95,7 +100,11 @@ class DeveloperResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('logo')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('company')
+                    ->label('Nama Perusahaan')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('company_name')
+                    ->label('Nama Brand')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
