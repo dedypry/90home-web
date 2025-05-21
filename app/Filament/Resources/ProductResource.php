@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Models\Developer;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -20,12 +21,13 @@ class ProductResource extends Resource
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-plus';
+    protected static ?string $navigationGroup = 'Management Product';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()->schema([
+                Forms\Components\Section::make('Product')->schema([
                     Forms\Components\FileUpload::make('images')
                         ->disk('public')
                         ->directory('product')
@@ -52,13 +54,60 @@ class ProductResource extends Resource
                         ->maxLength(255),
                     Forms\Components\TextInput::make('blok')
                         ->maxLength(255),
+                    Forms\Components\Select::make('developer_id')
+                        ->searchable()
+                        ->required()
+                        ->options(Developer::all()->pluck('company_name', 'id')),
+                    Forms\Components\Radio::make('listing_type')
+                        ->label('Label')
+                        ->options([
+                            'jual' => 'DI JUAL',
+                            'sewa' => 'DI SEWA',
+                        ]),
                     Forms\Components\RichEditor::make('description')
                         ->maxLength(255)
                         ->disableToolbarButtons([
                             'attachFiles',
                         ])
                         ->columnSpanFull(),
-                ])->columns(2)
+                ])->columns(2),
+
+                Forms\Components\Repeater::make('product_variant')
+                    ->label('Variant Produk')
+                    ->relationship()
+                    ->schema([
+                        Forms\Components\FileUpload::make('images')
+                            ->disk('public')
+                            ->directory('product')
+                            ->multiple()
+                            ->image()
+                            ->imageEditor()
+                            ->panelLayout('grid')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
+                            ->deleteUploadedFileUsing(function (string $file): void {
+                                if (Storage::disk('public')->exists($file)) {
+                                    Storage::disk('public')->delete($file);
+                                }
+                            })
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('type')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('blok')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->prefix('Rp'),
+                        Forms\Components\RichEditor::make('description')
+                            ->maxLength(255)
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(3)
+                    ->columnSpanFull()
 
             ]);
     }

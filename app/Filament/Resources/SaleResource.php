@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Filament\Resources\SaleResource\RelationManagers;
 use App\Filament\Resources\SaleResource\Widgets\SalesStats;
+use App\Models\Coordinator;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Sale;
 use App\Models\User;
 use Filament\Forms;
@@ -15,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class SaleResource extends Resource
 {
@@ -40,13 +43,50 @@ class SaleResource extends Resource
                         ->label('Cluster')
                         ->searchable()
                         ->options(Product::all()->pluck('cluster', 'id'))
+                        ->afterStateUpdated(fn(callable $set) => $set('product_variant_id', null))
+                        ->reactive()
+                        ->required(),
+                    Forms\Components\Select::make('product_variant_id')
+                        ->label('Variant')
+                        ->searchable()
+                        ->options(function (callable $get) {
+                            $productId = $get('product_id');
+
+                            if (!$productId) {
+                                return [];
+                            }
+
+                            return ProductVariant::where('product_id', $productId)
+                                ->get()
+                                ->mapWithKeys(function ($variant) {
+                                    return [
+                                        $variant->id => "{$variant->blok} - {$variant->type}",
+                                    ];
+                                });
+                        })
                         ->required(),
                     Forms\Components\TextInput::make('payment_type')
                         ->required()
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('agent_coordinator')
-                        ->required()
-                        ->maxLength(255),
+                    Forms\Components\Select::make('agent_coordinator')
+                        ->searchable()
+                        ->options(function (callable $get) {
+                            $productId = $get('product_id');
+
+                            if (!$productId) {
+                                return [];
+                            }
+                            $product = Product::find($productId);
+
+                            return Coordinator::where('developer_id', $product->developer_id)
+                                ->get()
+                                ->mapWithKeys(function ($coor) {
+                                    return [
+                                        $coor->id => $coor->name . ' ' . $coor->phone
+                                    ];
+                                });
+                        })
+                        ->required(),
                     Forms\Components\TextInput::make('customer')
                         ->required()
                         ->maxLength(255),
@@ -94,9 +134,20 @@ class SaleResource extends Resource
                         ->closeOnDateSelection()
                         ->visible(fn(string $context) => $context === 'edit'),
 
-                Forms\Components\TextInput::make('booking_fee')
-                    ->prefix('Rp')
-                    ->numeric(),
+                    Forms\Components\TextInput::make('booking_fee')
+                        ->prefix('Rp')
+                        ->numeric(),
+                    Forms\Components\FileUpload::make('attachment')
+                        ->disk('public')
+                        ->directory('attachment')
+                        ->multiple()
+                        ->panelLayout('grid')
+                        ->deleteUploadedFileUsing(function (string $file): void {
+                            if (Storage::disk('public')->exists($file)) {
+                                Storage::disk('public')->delete($file);
+                            }
+                        })
+                        ->columnSpanFull(),
                 ])->columns(2)
             ]);
     }

@@ -9,6 +9,7 @@ class Sale extends Model
     protected $guarded = [];
     protected $casts = [
         'product' => 'object',
+        'attachment' => 'array'
     ];
 
     public function user()
