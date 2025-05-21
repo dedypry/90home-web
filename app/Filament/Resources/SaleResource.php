@@ -17,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class SaleResource extends Resource
@@ -63,8 +64,7 @@ class SaleResource extends Resource
                                         $variant->id => "{$variant->blok} - {$variant->type}",
                                     ];
                                 });
-                        })
-                        ->required(),
+                        }),
                     Forms\Components\TextInput::make('payment_type')
                         ->required()
                         ->maxLength(255),
@@ -110,12 +110,6 @@ class SaleResource extends Resource
                         ])
                         ->native(false)
                         ->required(),
-                    Forms\Components\TextInput::make('commission')
-                        ->label('Komisi dalam %')
-                        ->placeholder('contoh : 3')
-                        ->suffix('%')
-                        ->required()
-                        ->numeric(),
                     Forms\Components\DatePicker::make('booking_at')
                         ->label('Tanggal Booking')
                         ->native(false)
@@ -157,7 +151,11 @@ class SaleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product')
-                    ->formatStateUsing(fn($state) => is_array($state) ? $state['cluster'] ?? '-' : ($state->cluster ?? '-'))
+                    ->html()
+                    ->formatStateUsing(function ($state) {
+                        $product = json_decode($state);
+                        return $product ? "<a href='/admin/products/$product->id'>$product->cluster</a>" : '-';
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Sales')
@@ -197,11 +195,20 @@ class SaleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->before(function (Sale $record) {
+                        $record->deleteAttachment();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->before(function (Collection $records) {
+                            foreach ($records as $record) {
+                                $record->deleteAttachment();
+                            }
+                        }),
                 ]),
             ]);
     }

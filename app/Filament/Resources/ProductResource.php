@@ -7,12 +7,14 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Developer;
 use App\Models\Product;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -45,15 +47,28 @@ class ProductResource extends Resource
                     Forms\Components\TextInput::make('cluster')
                         ->required()
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('price')
-                        ->required()
-                        ->numeric()
-                        ->default(0)
-                        ->prefix('Rp'),
+
                     Forms\Components\TextInput::make('type')
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('blok')
-                        ->maxLength(255),
+                    Grid::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('price')
+                                ->required()
+                                ->numeric()
+                                ->default(0)
+                                ->prefix('Rp'),
+                            Forms\Components\TextInput::make('commission_fee')
+                                ->required()
+                                ->numeric()
+                                ->default(0)
+                                ->suffix('%'),
+                            Forms\Components\TextInput::make('ppn')
+                                ->numeric()
+                                ->default(0)
+                                ->suffix('%'),
+                        ])
+                        ->columns(3)
+                        ->columnSpanFull(),
                     Forms\Components\Select::make('developer_id')
                         ->searchable()
                         ->required()
@@ -91,14 +106,29 @@ class ProductResource extends Resource
                             })
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('type')
+                            ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('blok')
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->default(0)
-                            ->prefix('Rp'),
+                        Grid::make()
+                            ->schema([
+                                Forms\Components\TextInput::make('price')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0)
+                                    ->prefix('Rp'),
+                                Forms\Components\TextInput::make('commission_fee')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0)
+                                    ->suffix('%'),
+                                Forms\Components\TextInput::make('ppn')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->suffix('%'),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
                         Forms\Components\RichEditor::make('description')
                             ->maxLength(255)
                             ->disableToolbarButtons([
@@ -106,7 +136,7 @@ class ProductResource extends Resource
                             ])
                             ->columnSpanFull(),
                     ])
-                    ->columns(3)
+                    ->columns(2)
                     ->columnSpanFull()
 
             ]);
@@ -122,11 +152,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('cluster')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('blok')
+                Tables\Columns\TextColumn::make('commission_fee')
+                    ->formatStateUsing(fn($state)=> intval($state)." %")
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -146,14 +177,21 @@ class ProductResource extends Resource
                     ->before(function (Product $record) {
                         $record->deleteImages();
                     }),
-                Tables\Actions\EditAction::make()
+                Tables\Actions\ViewAction::make()
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->before(function (Collection $records) {
+                            foreach ($records as $record) {
+                                $record->deleteImages();
+                            }
+                        }),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -168,6 +206,7 @@ class ProductResource extends Resource
         return [
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
+            'view' => Pages\ViewProduct::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }

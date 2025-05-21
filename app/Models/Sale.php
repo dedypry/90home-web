@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Sale extends Model
 {
@@ -15,5 +16,11 @@ class Sale extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function deleteAttachment(){
+        foreach ($this->attachment ?? [] as $image) {
+            Storage::disk('public')->delete($image);
+        }
     }
 }
