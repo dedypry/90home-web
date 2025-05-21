@@ -143,10 +143,8 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\DeleteAction::make()
                     ->requiresConfirmation()
-                    ->after(function (Product $record) {
-                        foreach ($record->images ?? [] as $image) {
-                            Storage::disk('public')->delete($image);
-                        }
+                    ->before(function (Product $record) {
+                        $record->deleteImages();
                     }),
                 Tables\Actions\EditAction::make()
 
