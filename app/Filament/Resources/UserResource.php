@@ -39,23 +39,26 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context) => $context === 'create')
-                    ->maxLength(255),
-                Forms\Components\Select::make('roles')
-                    ->searchable()
-                    ->relationship('roles', 'name')
+                Forms\Components\Section::make()->schema([
+
+                    Forms\Components\TextInput::make('name')
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('email')
+                        ->email()
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('password')
+                        ->password()
+                        ->required()
+                        ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context) => $context === 'create')
+                        ->maxLength(255),
+                    Forms\Components\Select::make('roles')
+                        ->searchable()
+                        ->relationship('roles', 'name')
+                ])->columns(2)
             ]);
     }
 

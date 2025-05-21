@@ -11,9 +11,9 @@ class SalesStats extends BaseWidget
 {
     protected function getStats(): array
     {
-        $totalSales = Sale::sum('price');
-        $totalCommission = Sale::sum(DB::raw('price * commission / 100'));
-        $totalCommissionPaid = Sale::whereNotNull('payment_at')->sum(DB::raw('price * commission / 100'));
+        $totalSales = Sale::whereNot('status', 'rejected')->sum('price');
+        $totalCommission = Sale::whereNot('status', 'rejected')->sum(DB::raw('price * commission / 100'));
+        $totalCommissionPaid = Sale::whereNot('status', 'rejected')->whereNotNull('payment_at')->sum(DB::raw('price * commission / 100'));
         return [
             Stat::make('Total Penjualan', 'Rp ' . number_format($totalSales, 0, ',', '.'))
                 ->description('Total nilai penjualan')
