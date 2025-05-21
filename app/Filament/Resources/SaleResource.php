@@ -160,9 +160,11 @@ class SaleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('product')
                     ->html()
-                    ->formatStateUsing(function ($state) {
+                    ->formatStateUsing(function ($state, $record) {
                         $product = json_decode($state);
-                        return $product ? "<a href='/admin/products/$product->id'>$product->cluster</a>" : '-';
+                        $variant = $record->product_variant;
+                        $variantType = $variant ? $variant->type . " -" : '';
+                        return $product ? "<a href='/admin/products/$product->id'>$product->cluster - $variantType $record->blok</a>" : '-';
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
@@ -172,14 +174,21 @@ class SaleResource extends Resource
                 Tables\Columns\TextColumn::make('payment_type')
                     ->label('Type Pemabayaran')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('agent_coordinator')
+                Tables\Columns\TextColumn::make('coordinator')
                     ->label('Agen Koordinator')
+                    ->html()
+                    ->formatStateUsing(function ($state) {
+                        return "<div>
+                        <div class='font-semibold text-sm'>{$state->name}</div>
+                        <div class='text-gray-500 text-xs'>{$state->phone}</div>
+                    </div>";
+                    })
+                    ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('customer')
                     ->label('Nama Pemebeli')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('promo')
-                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
@@ -190,6 +199,10 @@ class SaleResource extends Resource
                     ->label('Komisi dalam %')
                     ->numeric()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('promo')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

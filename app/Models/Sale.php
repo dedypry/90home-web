@@ -23,4 +23,13 @@ class Sale extends Model
             Storage::disk('public')->delete($image);
         }
     }
+
+    public function product_variant()
+    {
+        return $this->belongsTo(ProductVariant::class);
+    }
+    public function coordinator()
+    {
+        return $this->belongsTo(Coordinator::class, 'agent_coordinator');
+    }
 }
