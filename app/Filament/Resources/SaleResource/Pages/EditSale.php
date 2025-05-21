@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Filament\Resources\SaleResource\Pages;
+
+use App\Filament\Resources\SaleResource;
+use App\Models\Product;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditSale extends EditRecord
+{
+    protected static string $resource = SaleResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $product = Product::find($data['product_id']);
+        $data['product'] = $product ? json_encode($product->toArray()) : null;
+        $data['price'] = $product->price;
+        return $data;
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+}
