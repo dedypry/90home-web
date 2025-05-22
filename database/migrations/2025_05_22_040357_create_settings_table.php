@@ -20,13 +20,13 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        $settings = ['logo','brand','company_name','address','phone','email'];
+        // $settings = ['logo','brand','company_name','address','phone','email'];
 
-        foreach ($settings as $item) {
-            Setting::create([
-                "key"=> $item,
-            ]);
-        }
+        // foreach ($settings as $item) {
+        //     Setting::create([
+        //         "key"=> $item,
+        //     ]);
+        // }
     }
 
     /**
