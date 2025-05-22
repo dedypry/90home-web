@@ -125,7 +125,7 @@
             <tr>
                 <td>
                     <strong>Kepada Yth</strong><br>
-                    <strong style="font-size: 20px">{{ $developer->company }}</strong><br>
+                    <strong style="font-size: 15px">{{ $developer->company }}</strong><br>
                     <span class="address">{!!$developer->address!!} <p>@if ($developer->email) {{ $developer->email }}
                             @endif @if ($developer->phone)- {{$developer->phone}} @endif</p> </span><br>
 
