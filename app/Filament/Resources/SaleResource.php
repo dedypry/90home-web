@@ -200,10 +200,10 @@ class SaleResource extends Resource
                     ->label('Nama Pemebeli')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn($state) => config('status.status_colors')[$state] ?? config('status.status_colors.default'))
-                    ->formatStateUsing(fn($state) => config('status.status_labels')[$state] ?? ucfirst($state))
+                Tables\Columns\SelectColumn::make('status')
+                    ->options(config('status.status_labels'))
+                    // ->color(fn($state) => config('status.status_colors')[$state] ?? config('status.status_colors.default'))
+                    // ->formatStateUsing(fn($state) => config('status.status_labels')[$state] ?? ucfirst($state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('booking_at')
                     ->since()

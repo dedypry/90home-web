@@ -89,6 +89,14 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make("Verify")
+                    ->icon('heroicon-m-shield-exclamation')
+                    ->color('success')
+                    ->action(function (User $record) {
+                        $record->update([
+                            'email_verified_at' => now()
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
