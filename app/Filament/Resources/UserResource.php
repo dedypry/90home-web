@@ -97,6 +97,14 @@ class UserResource extends Resource
                             'email_verified_at' => now()
                         ]);
                     }),
+                Tables\Actions\Action::make("No Verify")
+                    ->icon('heroicon-m-shield-exclamation')
+                    ->color('danger')
+                    ->action(function (User $record) {
+                        $record->update([
+                            'email_verified_at' => null
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
