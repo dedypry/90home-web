@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -52,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
     {
         if (app()->environment('production')) {
             URL::forceScheme('https');
+        }
+
+        if (Schema::hasTable('settings')) {
+            $setting = (object)Setting::pluck('value', 'key')->toArray();
+            View::share('app', $setting);
         }
     }
 }

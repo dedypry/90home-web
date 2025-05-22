@@ -2,9 +2,9 @@
     <div class="row pt-5">
         <div class="col-lg-3 col-md-6 mb-5">
             <h4 class="text-primary mb-4">Get In Touch</h4>
-            <p><i class="fa fa-map-marker-alt mr-2"></i>Citra Maja City, Green Ville</p>
-            <p><i class="fa fa-phone-alt mr-2"></i>+62 85921091441</p>
-            <p><i class="fa fa-envelope mr-2"></i>agent@90home.id</p>
+            <p><i class="fa fa-map-marker-alt mr-2"></i>{{$app->address}}</p>
+            <p><i class="fa fa-phone-alt mr-2"></i>{{$app->phone}}</p>
+            <p><i class="fa fa-envelope mr-2"></i>{{$app->email}}</p>
             <div class="d-flex justify-content-start mt-4">
                 <a class="btn btn-outline-light rounded-circle text-center mr-2 px-0" style="width: 38px; height: 38px;"
                     href="#"><i class="fab fa-twitter"></i></a>

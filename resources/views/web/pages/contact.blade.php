@@ -28,21 +28,21 @@
                         <h1 class="flaticon-office font-weight-normal text-secondary m-0 mr-3"></h1>
                         <div class="d-flex flex-column">
                             <h4>Our Office</h4>
-                            <p class="m-0 text-white">Citra Maja City, Green Ville</p>
+                            <p class="m-0 text-white">{{$app->address}}</p>
                         </div>
                     </div>
                     <div class="d-inline-flex border border-secondary p-4 mb-4">
                         <h1 class="flaticon-email font-weight-normal text-secondary m-0 mr-3"></h1>
                         <div class="d-flex flex-column">
                             <h4>Email Us</h4>
-                            <p class="m-0 text-white">agent@90home.id</p>
+                            <p class="m-0 text-white">{{$app->email}}</p>
                         </div>
                     </div>
                     <div class="d-inline-flex border border-secondary p-4">
                         <h1 class="flaticon-telephone font-weight-normal text-secondary m-0 mr-3"></h1>
                         <div class="d-flex flex-column">
                             <h4>Call Us</h4>
-                            <p class="m-0 text-white">+62 85921091441</p>
+                            <p class="m-0 text-white">{{$app->phone}}</p>
                         </div>
                     </div>
                 </div>
