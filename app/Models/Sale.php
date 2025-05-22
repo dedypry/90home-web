@@ -18,7 +18,8 @@ class Sale extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function deleteAttachment(){
+    public function deleteAttachment()
+    {
         foreach ($this->attachment ?? [] as $image) {
             Storage::disk('public')->delete($image);
         }
@@ -28,8 +29,19 @@ class Sale extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
+
     public function coordinator()
     {
         return $this->belongsTo(Coordinator::class, 'agent_coordinator');
+    }
+
+    public function developer()
+    {
+        return $this->belongsTo(Developer::class);
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

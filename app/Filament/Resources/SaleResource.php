@@ -3,9 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SaleResource\Pages;
-use App\Filament\Resources\SaleResource\RelationManagers;
-use App\Filament\Resources\SaleResource\Widgets\SalesStats;
 use App\Models\Coordinator;
+use App\Models\Developer;
+use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Sale;
@@ -15,23 +15,18 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
+    protected static ?string $label = 'Order';
+    protected static ?string $navigationGroup = 'Sales';
 
-    // public static function getWidgets(): array
-    // {
-    //     return [
-    //         SalesStats::class
-    //     ];
-    // }
 
     public static function form(Form $form): Form
     {
@@ -40,10 +35,23 @@ class SaleResource extends Resource
             ->schema([
                 Forms\Components\Section::make()->schema([
 
+                    Forms\Components\Select::make('developer_id')
+                        ->label('Developer')
+                        ->searchable()
+                        ->options(Developer::all()->pluck('company_name', 'id'))
+                        ->afterStateUpdated(function (callable $set) {
+                            $set('product_id', null);
+                            $set('product_variant_id', null);
+                        })
+                        ->reactive()
+                        ->required(),
                     Forms\Components\Select::make('product_id')
                         ->label('Cluster')
                         ->searchable()
-                        ->options(Product::all()->pluck('cluster', 'id'))
+                        ->options(function (callable $get) {
+                            $developerId = $get('developer_id');
+                            return Product::where('developer_id', $developerId)->pluck('cluster', 'id');
+                        })
                         ->afterStateUpdated(fn(callable $set) => $set('product_variant_id', null))
                         ->reactive()
                         ->required(),
@@ -107,14 +115,7 @@ class SaleResource extends Resource
                         ->placeholder('Jika ada Promo, Bisa dimasukan disini')
                         ->maxLength(255),
                     Forms\Components\Select::make('status')
-                        ->options([
-                            'booking' => 'Booking',
-                            'akad' => 'Akad',
-                            'invoice' => 'Invoice',
-                            'payment' => 'Pembayaran',
-                            'resubmitted' => 'Ajukan Kembali',
-                            'rejected' => 'Ditolak',
-                        ])
+                        ->options(config('status.status_labels'))
                         ->native(false)
                         ->required(),
                     Forms\Components\DatePicker::make('booking_at')
@@ -167,12 +168,18 @@ class SaleResource extends Resource
                         return $product ? "<a href='/admin/products/$product->id'>$product->cluster - $variantType $record->blok</a>" : '-';
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('invoice.inv_number')
+                    ->label('Invoice Number')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Sales')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_type')
                     ->label('Type Pemabayaran')
+                    ->searchable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('coordinator')
                     ->label('Agen Koordinator')
@@ -191,37 +198,20 @@ class SaleResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                ->color(fn($state) => match ($state) {
-                    'booking'     => 'info',
-                    'akad'        => 'success',
-                    'invoice'     => 'warning',
-                    'payment'     => 'primary',
-                    'resubmitted' => 'gray',
-                    'rejected'    => 'danger',
-                    default       => 'secondary',
-                })
-                ->formatStateUsing(fn($state) => match ($state) {
-                    'booking'     => 'Booking',
-                    'akad'        => 'Akad',
-                    'invoice'     => 'Invoice',
-                    'payment'     => 'Pembayaran',
-                    'resubmitted' => 'Ajukan Kembali',
-                    'rejected'    => 'Ditolak',
-                    default       => ucfirst($state),
-                })
+                    ->color(fn($state) => config('status.status_colors')[$state] ?? config('status.status_colors.default'))
+                    ->formatStateUsing(fn($state) => config('status.status_labels')[$state] ?? ucfirst($state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('booking_at')
                     ->since()
                     ->label('Tanggal Booking')
-                    ->dateTooltip()
-                    ->searchable(),
+                    ->dateTooltip(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga')
                     ->money('IDR', locale: 'id')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('commission')
                     ->label('Komisi dalam %')
-                    ->numeric()
+                    ->formatStateUsing(fn($state) => intval($state) . ' %')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('promo')
@@ -254,6 +244,68 @@ class SaleResource extends Resource
                                 $record->deleteAttachment();
                             }
                         }),
+                    Tables\Actions\BulkAction::make('invoice')
+                        ->label('Buat Invoice')
+                        ->color('success')
+                        ->icon('heroicon-o-document')
+                        ->action(function (Collection $records) {
+
+                            $data = [];
+
+                            foreach ($records->groupBy('developer_id') as $item) {
+                                $developer = Developer::find($item->first()->developer_id);
+                                $invoice = getNextInvoiceNumber();
+                                $data[] = [
+                                    "developer" => $developer,
+                                    "invoice" => $invoice,
+                                    "item" => $item
+                                ];
+
+                                foreach ($item as $record) {
+                                    $record->update([
+                                        'invoice_id' => $invoice->id
+                                    ]);
+                                }
+                            }
+
+                            $pdf = Pdf::loadView('pdf.invoice', [
+                                'data' => $data
+                            ]);
+
+                            return response()->streamDownload(function () use ($pdf) {
+                                echo $pdf->stream();
+                            }, 'invoice-.pdf');
+
+
+                            // foreach ($records->groupBy('developer_id') as $data) {
+                            //             $developer = Developer::find($data->first()->developer_id);
+
+                            //             foreach ($data as $item) {
+                            //                 # code...
+                            //                 dd($item);
+                            //             }
+                            //             if ($developer) {
+                            //                 $pdf = Pdf::loadView('pdf.invoice', [
+                            //                     'developer' => $developer,
+                            //                     'sales' => $data,
+                            //                     'user' => auth()->user(),
+                            //                     'invoiceNumber' => 'INV-2025-0001',
+                            //                     'items' => [
+                            //                         ['name' => 'Product A', 'qty' => 2, 'price' => 50000],
+                            //                         ['name' => 'Product B', 'qty' => 1, 'price' => 150000],
+                            //                     ],
+                            //                     'subtotal' => 250000,
+                            //                     'ppn' => 27500,
+                            //                     'total' => 277500,
+                            //                     'status' => 'paid',
+                            //                 ]);
+
+                            //                 return response()->streamDownload(function () use ($pdf) {
+                            //                     echo $pdf->stream();
+                            //                 }, 'invoice-' . $developer->company_name . '.pdf');
+                            //             }
+                            //         }
+                        })
                 ]),
             ]);
     }
