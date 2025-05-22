@@ -18,6 +18,8 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Resources\Components\Tab;
+use Illuminate\Database\Eloquent\Model;
 
 class SaleResource extends Resource
 {
@@ -155,6 +157,8 @@ class SaleResource extends Resource
             ]);
     }
 
+
+
     public static function table(Table $table): Table
     {
         return $table
@@ -245,6 +249,7 @@ class SaleResource extends Resource
                             }
                         }),
                     Tables\Actions\BulkAction::make('invoice')
+                        ->visible(fn() => request()->query('activeTab') != 'invoice')
                         ->label('Buat Invoice')
                         ->color('success')
                         ->icon('heroicon-o-document')
@@ -275,39 +280,12 @@ class SaleResource extends Resource
                             return response()->streamDownload(function () use ($pdf) {
                                 echo $pdf->stream();
                             }, 'invoice-.pdf');
-
-
-                            // foreach ($records->groupBy('developer_id') as $data) {
-                            //             $developer = Developer::find($data->first()->developer_id);
-
-                            //             foreach ($data as $item) {
-                            //                 # code...
-                            //                 dd($item);
-                            //             }
-                            //             if ($developer) {
-                            //                 $pdf = Pdf::loadView('pdf.invoice', [
-                            //                     'developer' => $developer,
-                            //                     'sales' => $data,
-                            //                     'user' => auth()->user(),
-                            //                     'invoiceNumber' => 'INV-2025-0001',
-                            //                     'items' => [
-                            //                         ['name' => 'Product A', 'qty' => 2, 'price' => 50000],
-                            //                         ['name' => 'Product B', 'qty' => 1, 'price' => 150000],
-                            //                     ],
-                            //                     'subtotal' => 250000,
-                            //                     'ppn' => 27500,
-                            //                     'total' => 277500,
-                            //                     'status' => 'paid',
-                            //                 ]);
-
-                            //                 return response()->streamDownload(function () use ($pdf) {
-                            //                     echo $pdf->stream();
-                            //                 }, 'invoice-' . $developer->company_name . '.pdf');
-                            //             }
-                            //         }
                         })
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(Model $records):bool => $records->invoice_id === null
+            );
     }
 
     public static function getRelations(): array
