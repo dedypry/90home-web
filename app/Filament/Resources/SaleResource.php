@@ -259,7 +259,7 @@ class SaleResource extends Resource
 
                             foreach ($records->groupBy('developer_id') as $item) {
                                 $developer = Developer::find($item->first()->developer_id);
-                                $invoice = getNextInvoiceNumber();
+                                $invoice = getNextInvoiceNumber($developer->id);
                                 $data[] = [
                                     "developer" => $developer,
                                     "invoice" => $invoice,

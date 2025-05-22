@@ -68,7 +68,7 @@
         .terbilang {
             margin-top: 5px;
             background-color: #f5f5f5;
-            font-size: 20px;
+            font-size: 15px;
             font-style: italic;
             font-weight: bold;
             text-align: center;
@@ -101,7 +101,8 @@
                 <tr>
                     <td>
                         <div class="logo">
-                            <img src="{{ public_path('storage/'.$app->logo) }}" alt="{{$app->brand}}" style="width: 100%;">
+                            <img src="{{ public_path('storage/'.$app->logo) }}" alt="{{$app->brand}}"
+                                style="width: 100%;">
                         </div>
                     </td>
                     <td style="width: auto"></td>
@@ -198,8 +199,8 @@
                 <td style="text-align: right;"><strong>Total Penjualan :</strong></td>
                 <td style="width: 150px;">Rp {{numFormat($totalSales)}}</td>
             </tr> --}}
-            <tr style="font-size: 15px">
-                <td style="text-align: right;"><strong>Total Komisi:</strong></td>
+            <tr style="font-size: 14px">
+                <td style="text-align: right;" colspan="2"><strong>Total Komisi:</strong></td>
                 <td><strong>Rp {{numFormat($totalCommission)}}</strong></td>
             </tr>
         </table>
@@ -249,9 +250,9 @@
 
 
 
-            @if ($key > count($data))
-                <div style="page-break-after: always;"></div>
-            @endif
+    @if ($key+1 != count($data))
+    <div style="page-break-after: always;"></div>
+    @endif
 
 
     @endforeach

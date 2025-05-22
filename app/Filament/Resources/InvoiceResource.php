@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,7 @@ use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class InvoiceResource extends Resource
 {
@@ -66,7 +68,30 @@ class InvoiceResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('download invoice')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+                            $data = [];
+
+                            foreach ($records as $record) {
+                                $data[] = [
+                                    "developer" => $record->developer,
+                                    "invoice" => $record,
+                                    "item" => $record->sales
+                                ];
+                            }
+
+                            $pdf = Pdf::loadView('pdf.invoice', [
+                                'data' => $data
+                            ]);
+
+                            return response()->streamDownload(function () use ($pdf) {
+                                echo $pdf->output();
+                            }, 'invoice.pdf', [
+                                'Content-Type' => 'application/pdf',
+                            ]);
+                        }),
                 ]),
             ]);
     }

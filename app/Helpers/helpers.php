@@ -5,7 +5,7 @@ use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-function dateFormat($date=null, $format = 'd M Y', $locale = 'id')
+function dateFormat($date = null, $format = 'd M Y', $locale = 'id')
 {
     if (!$date) return Carbon::now()->locale($locale)->translatedFormat($format);
 
@@ -69,15 +69,19 @@ function terbilang($nilai)
     }
 }
 
-function getNextInvoiceNumber()
+function getNextInvoiceNumber($developerId = null)
 {
-    return DB::transaction(function () {
+    return DB::transaction(function () use ($developerId) {
         $invNo = generateInvNo();
-        return Invoice::create(["inv_number" => $invNo]);
+        return Invoice::create([
+            "inv_number" => $invNo,
+            'developer_id' => $developerId
+        ]);
     });
 }
 
-function generateInvNo(){
+function generateInvNo()
+{
     $inv = Invoice::max('id') ?? 0;
     $number = str_pad($inv + 1, 4, '0', STR_PAD_LEFT);
     $invNo = 'INV/' . now()->format('y') . "/" . $number;
@@ -86,6 +90,7 @@ function generateInvNo(){
 }
 
 
-function getApp(){
+function getApp()
+{
     return (object)Setting::pluck('value', 'key')->toArray();
 }

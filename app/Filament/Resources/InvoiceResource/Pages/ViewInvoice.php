@@ -100,14 +100,8 @@ class ViewInvoice extends ViewRecord implements HasTable
                     )
                 // ->formatStateUsing(fn($state,$record)=> 'IDR '.numFormat(($record->price * $record->qty) * $record->commission/100))
             ])
-            ->filters([
-                // ...
-            ])
             ->actions([
                 DeleteAction::make()
-            ])
-            ->bulkActions([
-                // ...
             ])
             ->paginated(false);
     }
