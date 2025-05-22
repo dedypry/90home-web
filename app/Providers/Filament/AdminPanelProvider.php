@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Models\Setting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,12 +24,13 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $app = getApp();
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('90Home')
-            ->brandLogo(asset('logo.PNG'))
+            ->brandName($app->brand)
+            ->brandLogo(asset('storage/'.$app->logo))
             ->brandLogoHeight('3rem')
             ->font('Poppins')
             ->topNavigation()

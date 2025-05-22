@@ -12,4 +12,8 @@ class Invoice extends Model
     {
         return $this->hasMany(Sale::class);
     }
+    public function developer()
+    {
+        return $this->belongsTo(Developer::class);
+    }
 }

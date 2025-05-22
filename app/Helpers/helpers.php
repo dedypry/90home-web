@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Invoice;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -82,4 +83,9 @@ function generateInvNo(){
     $invNo = 'INV/' . now()->format('y') . "/" . $number;
 
     return $invNo;
+}
+
+
+function getApp(){
+    return (object)Setting::pluck('value', 'key')->toArray();
 }

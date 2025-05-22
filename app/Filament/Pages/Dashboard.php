@@ -16,9 +16,8 @@ class Dashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            SalesStats::class,
+            StatsOverview::class,
             SalesWidget::class,
-            StatsOverview::class
         ];
     }
 }

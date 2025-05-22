@@ -17,15 +17,9 @@ class SalesWidget extends ChartWidget
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-            // ->pluck('total', 'month');
 
-            // dd($sales);
-
-
-        // Siapkan array bulan 1–12 dengan default 0
         $monthlySales = collect(range(1, 12))->mapWithKeys(fn($month) => [$month => 0]);
 
-        // Masukkan hasil query ke array tersebut
         foreach ($rawSales as $row) {
             $monthlySales[$row->month] = (float) $row->total;
         }

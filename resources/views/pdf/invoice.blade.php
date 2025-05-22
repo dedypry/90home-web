@@ -89,10 +89,11 @@
 </head>
 
 <body>
-    @foreach ($data as $items)
+    @foreach ($data as $key => $items)
     @php
     $developer = $items['developer'];
     $invoice = $items['invoice'];
+    $app = getApp()
     @endphp
     <div class="invoice-box">
         <div class="header">
@@ -100,16 +101,15 @@
                 <tr>
                     <td>
                         <div class="logo">
-                            <img src="{{ public_path('logo.PNG') }}" alt="Company Logo" style="width: 100%;">
+                            <img src="{{ public_path('storage/'.$app->logo) }}" alt="{{$app->brand}}" style="width: 100%;">
                         </div>
                     </td>
                     <td style="width: auto"></td>
                     <td>
                         <div class="company-info">
-                            <strong>PT BRAZAM GLOBAL JAYA</strong><br>
-                            Jl. Taman Adiyasa Blok J15 No. 2<br>
-                            Tangerang, Indonesia<br>
-                            Email: agent@90home.id
+                            <strong>{{$app->company_name}}</strong><br>
+                            {{$app->address}}<br>
+                            Email: {{$app->email}}
                         </div>
                     </td>
                 </tr>
@@ -132,7 +132,7 @@
                 </td>
                 <td style="text-align: right;">
                     <span style="font-size: 16px; font-weight: bold">Invoice #: {{ $invoice->inv_number }}</span> <br>
-                    <strong>Tanggal: {{ now()->format('d-m-Y') }}</strong><br>
+                    <strong>Tanggal: {{ dateFormat($invoice->created_at) }}</strong><br>
                     {{-- <strong>Status:</strong> {{ ucfirst($status ?? 'dibayar') }} --}}
                 </td>
             </tr>
@@ -218,28 +218,28 @@
             <tr>
                 <td>Bank </td>
                 <td style="width: 5px">:</td>
-                <td colspan="2">MANDIRI</td>
+                <td colspan="2">{{$app->bank_name}}</td>
                 <td style="text-align: center; width: 200px">Maja, {{dateFormat()}}</td>
             </tr>
             <tr>
                 <td>Cabang </td>
                 <td>:</td>
-                <td colspan="2">Cabang</td>
+                <td colspan="2">{{$app->bank_branch}}</td>
             </tr>
             <tr>
                 <td>No. A/ C </td>
                 <td>:</td>
-                <td colspan="2">176-00-0528371-6</td>
+                <td colspan="2">{{$app->account_number}}</td>
             </tr>
             <tr>
                 <td>Atas Nama </td>
                 <td>:</td>
-                <td colspan="2">PT. BRAZAM GLOBAL </td>
+                <td colspan="2">{{$app->company_name}}</td>
             </tr>
             <tr>
                 <td>NPWP </td>
                 <td>:</td>
-                <td>40.855.903.7-451.000</td>
+                <td>{{$app->npwp}}</td>
                 <td style="width: auto"></td>
                 <td style="text-align: center">( {{auth()->user()->name}} )</td>
             </tr>
@@ -249,7 +249,11 @@
 
 
 
-    <div style="page-break-after: always;"></div>
+            @if ($key > count($data))
+                <div style="page-break-after: always;"></div>
+            @endif
+
+
     @endforeach
 
 </body>
