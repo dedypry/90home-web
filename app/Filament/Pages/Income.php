@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\IncomeOverview;
+use App\Models\Sale;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -31,9 +32,15 @@ class Income extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        
+        $query = null;
+
+        if (auth()->user()?->hasRole('principal')) {
+            $query = auth()->user()->commission()->getQuery();
+        } else {
+            $query = Sale::query()->whereNot('status', 'rejected');
+        }
         return $table
-            ->query(auth()->user()->commission()->getQuery())
+            ->query($query)
             ->columns([
                 ViewColumn::make('product')
                     ->label('Produk')
@@ -46,7 +53,7 @@ class Income extends Page implements HasTable
                     ->label('Nama Sales')
                     ->numeric()
                     ->searchable()
-                    ->formatStateUsing(function($state){
+                    ->formatStateUsing(function ($state) {
                         $user = json_decode($state);
                         return $user->name;
                     })
