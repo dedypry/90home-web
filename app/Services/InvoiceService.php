@@ -20,7 +20,7 @@ class InvoiceService
                     "email" => $app->email,
                     "address" => $app->address,
                     "logo" => $app->logo,
-                    "company" => $app->company,
+                    "company" => $app->brand,
                 ]);
             }else{
                 $developer = Developer::find($item->first()->developer_id);

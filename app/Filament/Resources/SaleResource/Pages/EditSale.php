@@ -24,10 +24,10 @@ class EditSale extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-       $result = SalesService::calculateData($data);
+        $result = SalesService::calculateData($data);
 
-    //    dd($result);
-       return $result;
+        //    dd($result);
+        return $result;
     }
 
     protected function getRedirectUrl(): string
@@ -39,4 +39,5 @@ class EditSale extends EditRecord
     {
         SalesService::commissionPrincipal($this->record);
     }
+
 }

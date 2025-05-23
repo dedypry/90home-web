@@ -20,7 +20,8 @@
         <img src="{{asset('storage/'.$product->images[0])}}" alt="" style="height: 100px">
 
         <div class="text-img">
-            <p>{{$product->cluster}}</p>
+            <p>{{$product->cluster}} </p>
+            <p>{{$product->type}} - {{$record->blok}}</p>
             <p style="font-weight: bold; font-style: italic">Rp. {{numFormat($record->price)}}</p>
         </div>
     </div>
