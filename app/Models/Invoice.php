@@ -16,4 +16,9 @@ class Invoice extends Model
     {
         return $this->belongsTo(Developer::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'invoice_principal')->withPivot(['commission_fee', 'is_payment', 'ppn', 'pph']);
+    }
 }

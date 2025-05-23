@@ -6,8 +6,11 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Developer;
 use App\Models\Product;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,6 +32,92 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
+                Split::make([
+                    Forms\Components\Section::make([
+                        Forms\Components\Radio::make('listing_type')
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->options([
+                                'jual' => 'DI JUAL',
+                                'sewa' => 'DI SEWAKAN',
+                            ]),
+                        Forms\Components\Radio::make('type_ads')
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->options([
+                                'baru' => 'Rumah Baru',
+                                'secon' => 'Rumah Secon',
+                            ]),
+
+                        Forms\Components\Radio::make('furniture')
+                            ->options([
+                                'furnished' => 'Furnished',
+                                'non_furnished' => 'Non Furnished',
+                                'semi_furnished' => 'Semi Furnished',
+                            ])
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->columnSpanFull(),
+                        Forms\Components\Radio::make('certificate')
+                            ->label('Sertifikat')
+                            ->options([
+                                'shm' => 'SHM',
+                                'ajb' => 'AJB',
+                                'strata' => 'Strata',
+                                'girik' => 'Girik',
+                                'lainnya' => 'Lainnya',
+                            ])
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->columnSpanFull(),
+                        Grid::make()->schema([
+                            Forms\Components\TextInput::make('bedroom')
+                                ->numeric()
+                                ->label('Kamar Tidur'),
+                            Forms\Components\TextInput::make('bathroom')
+                                ->numeric()
+                                ->label('Kamar Mandi'),
+                            Forms\Components\TextInput::make('number_of_floors')
+                                ->numeric()
+                                ->label('Jumlah Lantai'),
+
+                        ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ])
+                        ->columns(2),
+                    Forms\Components\Section::make([
+                        Forms\Components\Radio::make('type_property')
+                            ->options([
+                                "house" => "Rumah",
+                                "apartement" => "Apartemen",
+                                "ruko" => "Ruko",
+                                "land_commercial" => "Tanah Komersial",
+                                "land_residential" => "Tanah Residensial",
+                                "warehouse" => "Gudang",
+                                "business_place" => "Tempat Usaha",
+                                "office" => "Kantor",
+                                "factory" => "Pabrik",
+                                "kost" => "Kost",
+                            ])
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('surface_area')
+                            ->label('Luas Tanah')
+                            ->numeric()
+                            ->suffix('m2'),
+                        Forms\Components\TextInput::make('building_area')
+                            ->label('Luas Bangunan')
+                            ->numeric()
+                            ->suffix('m2'),
+                        Forms\Components\TagsInput::make('public_facilities')
+                            ->label('Fasilitas Umum')
+                            ->placeholder('fasilitas umum, seperti mushola, dll')
+                            ->columnSpanFull()
+                    ])
+                        ->columns(2),
+                ])->columnSpanFull(),
                 Forms\Components\Section::make('Product')->schema([
                     Forms\Components\FileUpload::make('images')
                         ->disk('public')
@@ -44,48 +133,43 @@ class ProductResource extends Resource
                             }
                         })
                         ->columnSpanFull(),
+                    Forms\Components\TextInput::make('listing_title')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    Forms\Components\Select::make('pic_id')
+                        ->label('Sales PIC')
+                        ->searchable()
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->native(false)
+                        ->required(),
+
                     Forms\Components\TextInput::make('cluster')
                         ->required()
                         ->maxLength(255),
 
                     Forms\Components\TextInput::make('type')
                         ->maxLength(255),
-                    Grid::make()
-                        ->schema([
-                            Forms\Components\TextInput::make('price')
-                                ->required()
-                                ->numeric()
-                                ->default(0)
-                                ->prefix('Rp'),
-                            Forms\Components\TextInput::make('commission_fee')
-                                ->required()
-                                ->numeric()
-                                ->default(0)
-                                ->suffix('%'),
-                            Forms\Components\TextInput::make('ppn')
-                                ->numeric()
-                                ->default(0)
-                                ->suffix('%'),
-                        ])
-                        ->columns(3)
-                        ->columnSpanFull(),
                     Forms\Components\Select::make('developer_id')
                         ->searchable()
-                        ->required()
                         ->options(Developer::all()->pluck('company_name', 'id')),
-                    Forms\Components\Radio::make('listing_type')
-                        ->label('Label')
-                        ->options([
-                            'jual' => 'DI JUAL',
-                            'sewa' => 'DI SEWA',
-                        ]),
+                    Forms\Components\TextInput::make('price')
+                        ->required()
+                        ->numeric()
+                        ->default(0)
+                        ->prefix('Rp'),
+                    Forms\Components\TextInput::make('commission_fee')
+                        ->required()
+                        ->numeric()
+                        ->default(0)
+                        ->suffix('%'),
                     Forms\Components\RichEditor::make('description')
                         ->maxLength(255)
                         ->disableToolbarButtons([
                             'attachFiles',
                         ])
                         ->columnSpanFull(),
-                ])->columns(2),
+                ])->columns(3),
 
                 Forms\Components\Repeater::make('product_variant')
                     ->label('Variant Produk')
@@ -157,7 +241,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('commission_fee')
-                    ->formatStateUsing(fn($state)=> intval($state)." %")
+                    ->formatStateUsing(fn($state) => intval($state) . " %")
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

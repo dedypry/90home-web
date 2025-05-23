@@ -127,7 +127,21 @@ class SettingApps extends Page implements HasForms
                                             TextInput::make('value'),
                                         ])
                                         ->columns(3)
+                                ]),
+                            Tab::make('Komisi Sales')
+                                ->icon('heroicon-o-user-group')
+                                ->schema([
+                                    TextInput::make('commission_sales')
+                                        ->placeholder('Komisi dalam percentage')
+                                        ->suffix('%'),
+                                    TextInput::make('ppn')
+                                        ->placeholder('PPN dalam percentage')
+                                        ->suffix('%'),
+                                    TextInput::make('commission_principal')
+                                        ->placeholder('PPN dalam percentage')
+                                        ->suffix('%')
                                 ])
+                                ->columns(2),
                         ])
                 ])->from('md'),
 

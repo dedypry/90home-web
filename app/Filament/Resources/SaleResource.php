@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Sale;
 use App\Models\User;
+use App\Services\InvoiceService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -27,7 +28,7 @@ class SaleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
     protected static ?string $label = 'Order';
-    protected static ?string $navigationGroup = 'Sales';
+    protected static ?string $navigationGroup = 'Management Product';
 
 
     public static function form(Form $form): Form
@@ -45,8 +46,7 @@ class SaleResource extends Resource
                             $set('product_id', null);
                             $set('product_variant_id', null);
                         })
-                        ->reactive()
-                        ->required(),
+                        ->reactive(),
                     Forms\Components\Select::make('product_id')
                         ->label('Cluster')
                         ->searchable()
@@ -83,6 +83,11 @@ class SaleResource extends Resource
                         ->required()
                         ->placeholder('Masukan Payment Type, misal KPR BTN FLPP')
                         ->maxLength(255),
+                    Forms\Components\TextInput::make('qty')
+                        ->label('Quantity')
+                        ->default(1)
+                        ->required()
+                        ->placeholder('Masukan Quantity'),
                     Forms\Components\Select::make('agent_coordinator')
                         ->searchable()
                         ->options(function (callable $get) {
@@ -100,8 +105,7 @@ class SaleResource extends Resource
                                         $coor->id => $coor->name . ' ' . $coor->phone
                                     ];
                                 });
-                        })
-                        ->required(),
+                        }),
                     Forms\Components\TextInput::make('customer')
                         ->label('Nama Pembeli')
                         ->placeholder('Masukan nama pembeli Rumah')
@@ -255,26 +259,8 @@ class SaleResource extends Resource
                         ->icon('heroicon-o-document')
                         ->action(function (Collection $records) {
 
-                            $data = [];
-
-                            foreach ($records->groupBy('developer_id') as $item) {
-                                $developer = Developer::find($item->first()->developer_id);
-                                $invoice = getNextInvoiceNumber($developer->id);
-                                $data[] = [
-                                    "developer" => $developer,
-                                    "invoice" => $invoice,
-                                    "item" => $item
-                                ];
-
-                                foreach ($item as $record) {
-                                    $record->update([
-                                        'invoice_id' => $invoice->id
-                                    ]);
-                                }
-                            }
-
                             $pdf = Pdf::loadView('pdf.invoice', [
-                                'data' => $data
+                                'data' => InvoiceService::generateInvoice($records)
                             ]);
 
                             return response()->streamDownload(function () use ($pdf) {
@@ -284,7 +270,7 @@ class SaleResource extends Resource
                 ]),
             ])
             ->checkIfRecordIsSelectableUsing(
-                fn(Model $records):bool => $records->invoice_id === null
+                fn(Model $records): bool => $records->invoice_id === null
             );
     }
 

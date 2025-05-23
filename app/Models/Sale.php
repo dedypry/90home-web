@@ -44,4 +44,9 @@ class Sale extends Model
     {
         return $this->belongsTo(Invoice::class);
     }
+
+    public function principal()
+    {
+        return $this->belongsToMany(User::class,'principal_sale')->withPivot(['commission_fee', 'is_payment', 'ppn', 'pph']);
+    }
 }

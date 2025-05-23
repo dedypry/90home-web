@@ -12,6 +12,7 @@ class Product extends Model
 
     protected $casts = [
         'images' => 'array',
+        'public_facilities' => 'array',
     ];
 
     public function product_variant(): HasMany

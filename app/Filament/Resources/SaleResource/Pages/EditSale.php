@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\SaleResource\Pages;
 
 use App\Filament\Resources\SaleResource;
-use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\Sale;
+use App\Services\SalesService;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -25,22 +24,19 @@ class EditSale extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $product = Product::find($data['product_id']);
-        $data['product'] = $product ? json_encode($product->toArray()) : null;
-        $data['price'] = $product->price;
-        $data['commission'] = $product->commission_fee;
+       $result = SalesService::calculateData($data);
 
-        if ($data['product_variant_id']) {
-            $variant = ProductVariant::find($data['product_variant_id']);
-            $data['price'] = $variant->price;
-            $data['commission'] = $variant->commission_fee;
-        }
-
-        return $data;
+    //    dd($result);
+       return $result;
     }
 
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function afterSave(): void
+    {
+        SalesService::commissionPrincipal($this->record);
     }
 }
