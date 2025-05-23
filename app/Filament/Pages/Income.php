@@ -31,6 +31,7 @@ class Income extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        
         return $table
             ->query(auth()->user()->commission()->getQuery())
             ->columns([

@@ -16,10 +16,13 @@ class IncomeOverview extends BaseWidget
 
         if(auth()->user()?->hasRole('admin')){
             $totalTransferNotPayment = Sale::whereNot('status', 'rejected')->sum('commission_brand') * (100-$app->commission_principal)/100;
-            $totalTransfer = Sale::whereNot('status', 'payment')->sum('commission_brand') * (100-$app->commission_principal)/100;
-        }else{
+            $totalTransfer = Sale::where('status', 'payment')->sum('commission_brand') * (100-$app->commission_principal)/100;
+        }else if(auth()->user()?->hasRole('principal')){
             $totalTransfer = $user->commission()->where('principal_sale.is_payment', true)->sum('principal_sale.commission_fee');
             $totalTransferNotPayment = $user->commission()->where('principal_sale.is_payment', false)->sum('principal_sale.commission_fee');
+        }else{
+            $totalTransferNotPayment = $user->sales()->whereNot('status','rejected')->sum('commission_sales');
+            $totalTransfer = $user->sales()->where('status','payment')->sum('commission_sales');
         }
         return [
             Stat::make('Total Transfer', numFormat($totalTransfer))
