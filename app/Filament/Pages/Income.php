@@ -41,10 +41,14 @@ class Income extends Page implements HasTable
                     ->label('No. Invoice')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('user.name')
+                TextColumn::make('agent')
                     ->label('Nama Sales')
                     ->numeric()
                     ->searchable()
+                    ->formatStateUsing(function($state){
+                        $user = json_decode($state);
+                        return $user->name;
+                    })
                     ->sortable(),
                 TextColumn::make('customer')
                     ->searchable()
