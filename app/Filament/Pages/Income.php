@@ -68,10 +68,18 @@ class Income extends Page implements HasTable
                     ->color(fn($state) => config('status.status_colors')[$state] ?? config('status.status_colors.default'))
                     ->formatStateUsing(fn($state) => config('status.status_labels')[$state] ?? ucfirst($state))
                     ->searchable(),
-                TextColumn::make('commission_fee')
+                    
+                TextColumn::make(
+                        auth()->user()?->hasRole('agent')
+                            ? 'commission_sales'
+                            : (auth()->user()?->hasRole('admin')
+                                ? 'commission_brand'
+                                : 'commission_fee'
+                            )
+                    )
                     ->label('Komisi')
                     ->money('IDR', locale: 'id'),
-                IconColumn::make('is_payment')
+                IconColumn::make(auth()->user()?->hasRole('principal') ? 'is_payment': 'is_payment_sales')
                     ->label('Pembayaran')
                     ->boolean()
             ])
