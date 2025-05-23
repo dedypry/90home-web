@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@include('web.layouts.partials.head')
+@include('components.layouts.partials.head')
 
 <body>
     <!-- Topbar Start -->
-    @include('web.layouts.partials.toolbar')
+    @include('components.layouts.partials.toolbar')
     <!-- Topbar End -->
 
 
     <!-- Navbar Start -->
-    @include('web.layouts.partials.navbar')
+    @include('components.layouts.partials.navbar')
     <!-- Navbar End -->
 
 
     <!-- Under Nav Start -->
-    @include('web.layouts.partials.under-nav')
+    @include('components.layouts.partials.under-nav')
     <!-- Under Nav End -->
-
-@yield('content')
+    {{ $slot }}
 
 
     <!-- Footer Start -->
-    @include('web.layouts.partials.footer')
+    @include('components.layouts.partials.footer')
     <!-- Footer End -->
 
 
@@ -31,7 +30,8 @@
 
 
     <!-- JavaScript Libraries -->
-   @include('web.layouts.partials.script')
+    @include('components.layouts.partials.script')
+    @livewireScripts
 </body>
 
 </html>

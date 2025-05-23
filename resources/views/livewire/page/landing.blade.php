@@ -1,6 +1,4 @@
-@extends('web.layouts.base-layout')
-
-@section('content')
+<div>
     <!-- Carousel Start -->
     <div class="container-fluid p-0">
         <div id="header-carousel" class="carousel slide" data-ride="carousel">
@@ -48,7 +46,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-5">
-                    <div class="d-flex flex-column align-items-center justify-content-center bg-primary h-100 py-5 px-3">
+                    <div
+                        class="d-flex flex-column align-items-center justify-content-center bg-primary h-100 py-5 px-3">
                         <i class="flaticon-brickwall display-1 font-weight-normal text-secondary mb-3"></i>
                         <h4 class="display-3 mb-3">25+</h4>
                         <h1 class="m-0">Years Experience</h1>
@@ -198,7 +197,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-1.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-1.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -217,7 +217,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-2.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-2.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -236,7 +237,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-3.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-3.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -255,7 +257,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-4.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-4.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -274,7 +277,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-5.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-5.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -293,7 +297,8 @@
                                 <a class="btn btn-outline-primary m-1" href="">
                                     <i class="fa fa-link"></i>
                                 </a>
-                                <a class="btn btn-outline-primary m-1" href="img/portfolio-6.jpg" data-lightbox="portfolio">
+                                <a class="btn btn-outline-primary m-1" href="img/portfolio-6.jpg"
+                                    data-lightbox="portfolio">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -311,7 +316,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-sm-6">
-                    <div class="py-5 px-4 h-100 bg-primary d-flex flex-column align-items-center justify-content-center">
+                    <div
+                        class="py-5 px-4 h-100 bg-primary d-flex flex-column align-items-center justify-content-center">
                         <h6 class="text-white font-weight-normal text-uppercase mb-3">Our Team</h6>
                         <h1 class="mb-0 text-center">Meet Our Team Members</h1>
                     </div>
@@ -326,9 +332,11 @@
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
                                         style="width: 38px; height: 38px;" href="#"><i class="fab fa-twitter"></i></a>
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
-                                        style="width: 38px; height: 38px;" href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-outline-primary text-center px-0" style="width: 38px; height: 38px;"
-                                        href="#"><i class="fab fa-linkedin-in"></i></a>
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-outline-primary text-center px-0"
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                             <div class="d-flex flex-column bg-secondary text-center py-3">
@@ -344,9 +352,11 @@
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
                                         style="width: 38px; height: 38px;" href="#"><i class="fab fa-twitter"></i></a>
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
-                                        style="width: 38px; height: 38px;" href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-outline-primary text-center px-0" style="width: 38px; height: 38px;"
-                                        href="#"><i class="fab fa-linkedin-in"></i></a>
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-outline-primary text-center px-0"
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                             <div class="d-flex flex-column bg-secondary text-center py-3">
@@ -362,9 +372,11 @@
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
                                         style="width: 38px; height: 38px;" href="#"><i class="fab fa-twitter"></i></a>
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
-                                        style="width: 38px; height: 38px;" href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-outline-primary text-center px-0" style="width: 38px; height: 38px;"
-                                        href="#"><i class="fab fa-linkedin-in"></i></a>
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-outline-primary text-center px-0"
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                             <div class="d-flex flex-column bg-secondary text-center py-3">
@@ -380,9 +392,11 @@
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
                                         style="width: 38px; height: 38px;" href="#"><i class="fab fa-twitter"></i></a>
                                     <a class="btn btn-outline-primary text-center mr-2 px-0"
-                                        style="width: 38px; height: 38px;" href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-outline-primary text-center px-0" style="width: 38px; height: 38px;"
-                                        href="#"><i class="fab fa-linkedin-in"></i></a>
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-outline-primary text-center px-0"
+                                        style="width: 38px; height: 38px;" href="#"><i
+                                            class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                             <div class="d-flex flex-column bg-secondary text-center py-3">
@@ -513,4 +527,4 @@
         </div>
     </div>
     <!-- Blog End -->
-@endsection
+</div>

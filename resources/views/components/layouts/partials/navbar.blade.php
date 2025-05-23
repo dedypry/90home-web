@@ -9,10 +9,10 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                 <div class="navbar-nav ml-auto py-0">
-                    <a href="/" class="nav-item nav-link active">Home</a>
-                    <a href="/about" class="nav-item nav-link">About</a>
-                    <a href="/service" class="nav-item nav-link">Service</a>
-                    <a href="/project" class="nav-item nav-link">Project</a>
+                    <a href="{{route('home')}}" wire:navigate class="nav-item nav-link {{request()->routeIs('home') ? 'active': ''}}">Home</a>
+                    <a href="{{route('about')}}" wire:navigate class="nav-item nav-link {{request()->routeIs('about') ? 'active': ''}}">About</a>
+                    <a href="{{route('service')}}" wire:navigate class="nav-item nav-link {{request()->routeIs('service') ? 'active': ''}}">Service</a>
+                    <a href="{{route('project')}}" wire:navigate class="nav-item nav-link {{request()->routeIs('project') ? 'active': ''}}">Project</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu rounded-0 m-0">
@@ -20,7 +20,7 @@
                             <a href="#" class="dropdown-item">Blog Detail</a>
                         </div>
                     </div>
-                    <a href="/contact" class="nav-item nav-link">Contact</a>
+                    <a href="{{route('contact')}}" wire:navigate class="nav-item nav-link {{request()->routeIs('contact') ? 'active': ''}}">Contact</a>
                 </div>
             </div>
         </nav>
