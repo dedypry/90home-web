@@ -34,10 +34,12 @@ class Income extends Page implements HasTable
     {
         $query = null;
 
-        if (auth()->user()?->hasRole('principal')) {
+        if(auth()->user()?->hasRole('admin')){
+            $query = Sale::query()->whereNot('status','rejected');
+        }else if(auth()->user()?->hasRole('principal')){
             $query = auth()->user()->commission()->getQuery();
-        } else {
-            $query = Sale::query()->whereNot('status', 'rejected');
+        }else{
+            $query = auth()->user()->sales()->whereNot('status', 'rejected');
         }
         return $table
             ->query($query)
@@ -53,7 +55,7 @@ class Income extends Page implements HasTable
                     ->label('Nama Sales')
                     ->numeric()
                     ->searchable()
-                    ->formatStateUsing(function ($state) {
+                    ->formatStateUsing(function($state){
                         $user = json_decode($state);
                         return $user->name;
                     })
