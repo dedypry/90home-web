@@ -39,7 +39,7 @@ class Income extends Page implements HasTable
         }else if(auth()->user()?->hasRole('principal')){
             $query = auth()->user()->commission()->getQuery();
         }else{
-            $query = auth()->user()->sales()->whereNot('status', 'rejected');
+            $query = auth()->user()->sales()->whereNot('status', 'rejected')->getQuery();
         }
         return $table
             ->query($query)
