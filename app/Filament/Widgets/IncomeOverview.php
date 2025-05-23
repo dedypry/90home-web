@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Sale;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
@@ -10,9 +11,16 @@ class IncomeOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $app = getApp();
         $user = Auth::user();
-        $totalTransfer = $user->commission()->where('principal_sale.is_payment', true)->sum('principal_sale.commission_fee');
-        $totalTransferNotPayment = $user->commission()->where('principal_sale.is_payment', false)->sum('principal_sale.commission_fee');
+
+        if(auth()->user()?->hasRole('admin')){
+            $totalTransferNotPayment = Sale::whereNot('status', 'rejected')->sum('commission_brand') * (100-$app->commission_principal)/100;
+            $totalTransfer = Sale::whereNot('status', 'payment')->sum('commission_brand') * (100-$app->commission_principal)/100;
+        }else{
+            $totalTransfer = $user->commission()->where('principal_sale.is_payment', true)->sum('principal_sale.commission_fee');
+            $totalTransferNotPayment = $user->commission()->where('principal_sale.is_payment', false)->sum('principal_sale.commission_fee');
+        }
         return [
             Stat::make('Total Transfer', numFormat($totalTransfer))
                 ->description('Total Pendapatan yang sudah di transfer')
